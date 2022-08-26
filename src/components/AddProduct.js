@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 
-const AddProduct = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    imgUrl: "",
-    price: 0,
-    ratings: 0,
-  });
+const initialFormData = {
+  name: "",
+  description: "",
+  imgUrl: "",
+  price: 0,
+  ratings: 0,
+};
+const AddProduct = ({ setProducts }) => {
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState([]);
   const [successError, setSuccessError] = useState("");
 
@@ -48,10 +50,12 @@ const AddProduct = () => {
         : [];
       console.log(products);
       setSuccessError("Product added successfully!");
+      setFormData(initialFormData);
       localStorage.setItem(
         "products",
-        JSON.stringify(products.concat(formData))
+        JSON.stringify(products.concat({ ...formData, id: uuidv4() }))
       );
+      setProducts(JSON.parse(localStorage.getItem("products")));
     }
   };
   return (

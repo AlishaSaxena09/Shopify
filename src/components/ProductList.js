@@ -2,24 +2,58 @@ import React from "react";
 import Dropdown from "../extras/Dropdown";
 
 export default function ProductList(props) {
-  const products = localStorage.getItem("products")
-    ? JSON.parse(localStorage.getItem("products"))
-    : [];
-  console.log(products);
+  // console.log(products);
+  const {
+    products,
+    setProducts,
+    cartItems,
+    addItemToCart,
+    deleteItemFromCart,
+  } = props;
 
-  function handleDelete() {
-    localStorage.removeItem();
+  function handleDelete(productId) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete product with productId: " + productId
+      )
+    ) {
+      const updatedProductsList = products.filter(
+        (product) => product.id !== productId
+      );
+      setProducts(updatedProductsList);
+      localStorage.setItem("products", JSON.stringify(products));
+      // alert("Done");
+    }
   }
   return (
     <section className="mt-10">
       <div className="flex justify-end mr-24">
         <Dropdown />
       </div>
-      <div className="ml-20 grid grid-cols-2 gap-10">
-        {products.map((product, onAddToCart) => {
-          return <ProductCard product={product} handleDelete={handleDelete} />;
-        })}
-      </div>
+      {products.length > 0 ? (
+        <div className="ml-20 grid grid-cols-2 gap-10">
+          {products.map((product) => {
+            return (
+              <ProductCard
+                product={product}
+                handleDelete={handleDelete}
+                count={cartItems[product.id]}
+                addItemToCart={addItemToCart}
+                deleteItemFromCart={deleteItemFromCart}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col justify-center items-center py-8 w-full">
+          <img
+            src="/images/undraw_note_list_re_r4u9.svg"
+            className="max-w-md"
+            alt="No Product Found!"
+          />
+          <h3 className="font-bold text-3xl mt-8">No Products Found!</h3>
+        </div>
+      )}
     </section>
   );
 }
@@ -50,11 +84,32 @@ const ProductCard = (props) => {
             <button className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">
               Add to Wishlist
             </button>
-            <button className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">
-              Add to Cart
-            </button>
+            {props.count ? (
+              <div className="flex items-center px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded">
+                <button
+                  className="bg-white rounded text-black py-1 px-2"
+                  onClick={() => props.deleteItemFromCart(props.product.id)}
+                >
+                  -
+                </button>
+                <p className="px-4">{props.count}</p>
+                <button
+                  className="bg-white rounded text-black py-1 px-2"
+                  onClick={() => props.addItemToCart(props.product.id)}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => props.addItemToCart(props.product.id)}
+                className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded"
+              >
+                Add to Cart
+              </button>
+            )}
             <button
-              onClick={props.handleDelete}
+              onClick={() => props.handleDelete(props.product.id)}
               className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded"
             >
               Delete
