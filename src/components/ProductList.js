@@ -1,5 +1,4 @@
 import React from "react";
-import Dropdown from "../extras/Dropdown";
 
 export default function ProductList(props) {
   // console.log(products);
@@ -27,9 +26,6 @@ export default function ProductList(props) {
   }
   return (
     <section className="mt-10">
-      <div className="flex justify-end mr-24">
-        <Dropdown />
-      </div>
       {products.length > 0 ? (
         <div className="ml-20 grid grid-cols-2 gap-10">
           {products.map((product) => {
